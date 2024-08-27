@@ -1,18 +1,11 @@
-<h1><%= @event.summary %></h1>
-
-<p>
-  <strong>Description:</strong>
-  <%= @event.description %>
-</p>
-
-<p>
-  <strong>Start:</strong>
-  <%= @event.start.date_time %>
-</p>
-
-<p>
-  <strong>End:</strong>
-  <%= @event.end.date_time %>
-</p>
-
-<%= link_to 'Back to Events', events_path(calendar_id: params[:calendar_id]) %>
+<div class="container my-3">
+  <div class="card">
+    <div class="card-body">
+      <div class="card-title"><h3><%= @event.summary %></h3></div>
+      <div class="card-text"><p><strong>Description: </strong><%= @event.description %></p></div>
+      <div class="card-text"><p><strong>Start Date: </strong><%= @event.start.date_time %></p></div>
+      <div class="card-text"><p><strong>End Date: </strong><%= @event.end.date_time %></p></div>
+      <%= link_to 'Back to Events', events_path(calendar_id: params[:calendar_id]), class: 'text-decoration-none' %>
+    </div>
+  </div>
+</div>

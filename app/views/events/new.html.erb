@@ -1,6 +1,7 @@
-<h1>New Event</h1>
+<div class="container my-3">
+  <h1>New Event</h1>
 
-<%= form_with(model: @event, local: true) do |form| %>
+  <%= form_with(model: @event, local: true) do |form| %>
   <% if @event.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@event.errors.count, "error") %> prohibited this event from being saved:</h2>
@@ -13,32 +14,33 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
+  <div class="form-control my-3">
+    <%= form.label :title, class: 'mb-1' %>
+    <%= form.text_field :title, class: 'form-control', placeholder: 'Enter Event Title...' %>
   </div>
 
-  <div class="field">
-    <%= form.label :description %>
-    <%= form.text_area :description %>
+  <div class="form-control my-3">
+    <%= form.label :description, class: 'mb-1' %>
+    <%= form.text_area :description, class: 'form-control', placeholder: 'Enter Description...' %>
   </div>
 
-  <div class="field">
+  <div class="form-control my-3">
     <%= form.label :start_time %>
-    <%= form.datetime_select :start_time %>
+    <%= form.datetime_select :start_time, class: 'form-select' %>
   </div>
 
-  <div class="field">
+  <div class="form-control my-3">
     <%= form.label :end_time %>
-    <%= form.datetime_select :end_time %>
+    <%= form.datetime_select :end_time, class: 'form-select' %>
   </div>
 
-  <div class="field">
-    <%= form.label :calendar_id %>
-    <%= form.text_field :calendar_id %>
+  <div class="form-control my-3">
+    <%= form.label :calendar_id, class: 'mb-1' %>
+    <%= form.text_field :calendar_id, class: 'form-control', placeholder: 'Enter User\'s Mail...' %>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit class: 'btn btn-sm btn-primary hover' %>
   </div>
 <% end %>
+</div>
