@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  start_time: 2024-08-23 13:24:05
+  end_time: 2024-08-23 13:24:05
+  calendar_id: MyString
+
+two:
+  title: MyString
+  description: MyText
+  start_time: 2024-08-23 13:24:05
+  end_time: 2024-08-23 13:24:05
+  calendar_id: MyString

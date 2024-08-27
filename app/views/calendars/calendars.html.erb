@@ -1,0 +1,9 @@
+<h1>Calendars</h1>
+
+<ul>
+  <% @calendar_list.items.each do |calendar| %>
+    <li><%= calendar.summary %> - <%= calendar.description %></li>
+  <% end %>
+</ul>
+
+<%= link_to 'Create Event', new_event_path, class: 'btn btn-primary' %>

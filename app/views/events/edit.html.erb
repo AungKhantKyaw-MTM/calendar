@@ -1,0 +1,30 @@
+<h1>Edit Event</h1>
+
+<%= form_with url: event_path(@event.id), method: :patch, local: true do |form| %>
+  <div>
+  <%= form.hidden_field :id, value: @event.id %>
+    <%= form.label :summary %>
+    <%= form.text_field :summary, value: @event.summary %>
+  </div>
+
+  <div>
+    <%= form.label :description %>
+    <%= form.text_area :description, value: @event.description %>
+  </div>
+
+  <div>
+    <%= form.label :start_time, "Start Time" %>
+    <%= form.datetime_select :start_time, default: @event.start.date_time.in_time_zone %>
+  </div>
+
+  <div>
+    <%= form.label :end_time, "End Time" %>
+    <%= form.datetime_select :end_time, default: @event.end.date_time.in_time_zone %>
+  </div>
+
+  <div>
+    <%= form.submit "Update Event" %>
+  </div>
+<% end %>
+
+<%= link_to 'Back to Events', events_path(calendar_id: params[:calendar_id]) %>
