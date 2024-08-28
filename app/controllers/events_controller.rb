@@ -32,11 +32,13 @@ class EventsController < ApplicationController
     
       end_date = Date.parse(params[:event][:end_time])
       end_time = Time.parse(params[:event][:event_end_time])
+      
       @event.end_time = DateTime.new(end_date.year, end_date.month, end_date.day, end_time.hour, end_time.min, end_time.sec)
-
+      
       if @event.save
         begin
           create_google_event(@event)
+          byebug
           redirect_to events_path, notice: 'Event was successfully created.'
         rescue Google::Apis::AuthorizationError => e
           flash[:alert] = "Authorization error: #{e.message}"
@@ -48,7 +50,7 @@ class EventsController < ApplicationController
       else
         render :new
       end
-    end
+    end    
   
     def index
       @calendar_service = initialize_calendar_service
@@ -118,14 +120,14 @@ class EventsController < ApplicationController
       calendar_id = params[:calendar_id] || "mtm.aungkhantkyaw@gmail.com"
       event_id = params[:id]
     
-      start_time = Time.zone.parse("#{params[:start_time]} #{params[:event_start_time]}")
-      end_time = Time.zone.parse("#{params[:end_time]} #{params[:event_end_time]}")
+      start_time = Time.zone.parse("#{params[:start_time]} #{params[:event_start_time]}").utc.iso8601
+      end_time = Time.zone.parse("#{params[:end_time]} #{params[:event_end_time]}").utc.iso8601
     
       event_params = {
         summary: params[:summary],
         description: params[:description],
-        start: { date_time: start_time.iso8601, time_zone: "Asia/Yangon" },
-        end: { date_time: end_time.iso8601, time_zone: "Asia/Yangon" }
+        start: { date_time: start_time, time_zone: 'UTC' },
+        end: { date_time: end_time, time_zone: 'UTC' }
       }
     
       begin
@@ -167,21 +169,23 @@ class EventsController < ApplicationController
     def create_google_event(event)
       service = Google::Apis::CalendarV3::CalendarService.new
       service.authorization = @client
-    
+      
       if @client.expired?
         response = @client.refresh!
         session[:authorization] = response
         @client.update!(response)
       end
-    
+      
+      start_time_utc = event.start_time.utc.iso8601
+      end_time_utc = event.end_time.utc.iso8601
+      
       google_event = Google::Apis::CalendarV3::Event.new(
         summary: event.title,
         description: event.description,
-        start: Google::Apis::CalendarV3::EventDateTime.new(date_time: event.start_time.iso8601, time_zone: "Asia/Yangon"),
-        end: Google::Apis::CalendarV3::EventDateTime.new(date_time: event.end_time.iso8601, time_zone: "Asia/Yangon")
+        start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time_utc, time_zone: 'UTC'),
+        end: Google::Apis::CalendarV3::EventDateTime.new(date_time: end_time_utc, time_zone: 'UTC')
       )
       byebug
-    
       service.insert_event(event.calendar_id, google_event)
     end
   
