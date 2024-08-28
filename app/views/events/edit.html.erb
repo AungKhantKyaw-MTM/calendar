@@ -3,7 +3,7 @@
 
   <%= form_with url: event_path(@event.id), method: :patch, local: true do |form| %>
     <div class="form-control my-3">
-    <%= form.hidden_field :id, value: @event.id %>
+      <%= form.hidden_field :id, value: @event.id %>
       <%= form.label :summary, class: 'mb-1' %>
       <%= form.text_field :summary, value: @event.summary, class: 'form-control' %>
     </div>
@@ -14,13 +14,23 @@
     </div>
 
     <div class="form-control my-3">
+      <%= form.label :start_time, "Start Date" %>
+      <%= form.date_field :start_time, value: @event.start.date_time.to_date, class: 'form-control' %>
+    </div>
+
+    <div class="form-control my-3">
       <%= form.label :start_time, "Start Time" %>
-      <%= form.datetime_select :start_time, default: @event.start.date_time.in_time_zone, class: 'form-control' %>
+      <%= form.time_field :event_start_time, value: @event.start.date_time.strftime('%H:%M'), class: 'form-control' %>
+    </div>
+
+    <div class="form-control my-3">
+      <%= form.label :end_time, "End Date" %>
+      <%= form.date_field :end_time, value: @event.end.date_time.to_date, class: 'form-control' %>
     </div>
 
     <div class="form-control my-3">
       <%= form.label :end_time, "End Time" %>
-      <%= form.datetime_select :end_time, default: @event.end.date_time.in_time_zone, class: 'form-control' %>
+      <%= form.time_field :event_end_time, value: @event.end.date_time.strftime('%H:%M'), class: 'form-control' %>
     </div>
 
     <div class="my-3">
@@ -29,5 +39,4 @@
   <% end %>
 
   <%= link_to 'Back to Events', events_path(calendar_id: params[:calendar_id]), class: 'text-danger text-decoration-none' %>
-
 </div>

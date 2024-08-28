@@ -25,7 +25,15 @@ class EventsController < ApplicationController
   
     def create
       @event = Event.new(event_params)
-  
+    
+      start_date = Date.parse(params[:event][:start_time])
+      start_time = Time.parse(params[:event][:event_start_time])
+      @event.start_time = DateTime.new(start_date.year, start_date.month, start_date.day, start_time.hour, start_time.min, start_time.sec)
+    
+      end_date = Date.parse(params[:event][:end_time])
+      end_time = Time.parse(params[:event][:event_end_time])
+      @event.end_time = DateTime.new(end_date.year, end_date.month, end_date.day, end_time.hour, end_time.min, end_time.sec)
+
       if @event.save
         begin
           create_google_event(@event)
@@ -110,11 +118,14 @@ class EventsController < ApplicationController
       calendar_id = params[:calendar_id] || "mtm.aungkhantkyaw@gmail.com"
       event_id = params[:id]
     
+      start_time = Time.zone.parse("#{params[:start_time]} #{params[:event_start_time]}")
+      end_time = Time.zone.parse("#{params[:end_time]} #{params[:event_end_time]}")
+    
       event_params = {
         summary: params[:summary],
         description: params[:description],
-        start: { date_time: "2024-08-23T16:41:00+06:30", time_zone: "Asia/Yangon" },  
-        end: { date_time: "2024-08-23T17:41:00+06:30", time_zone: "Asia/Yangon" }
+        start: { date_time: start_time.iso8601, time_zone: "Asia/Yangon" },
+        end: { date_time: end_time.iso8601, time_zone: "Asia/Yangon" }
       }
     
       begin
@@ -124,7 +135,7 @@ class EventsController < ApplicationController
       rescue Google::Apis::ClientError => e
         Rails.logger.error "Error updating event: #{e.message}"
         flash[:alert] = "Failed to update event."
-    
+        
         @event = service.get_event(calendar_id, event_id)
         render :edit
       end
@@ -150,26 +161,27 @@ class EventsController < ApplicationController
     end
   
     def event_params
-      params.require(:event).permit(:title, :description, :start_time, :end_time, :calendar_id)
+      params.require(:event).permit(:title, :description, :start_time, :end_time, :calendar_id, :event_start_time, :event_end_time)
     end
   
     def create_google_event(event)
       service = Google::Apis::CalendarV3::CalendarService.new
       service.authorization = @client
-  
+    
       if @client.expired?
         response = @client.refresh!
         session[:authorization] = response
         @client.update!(response)
       end
-  
+    
       google_event = Google::Apis::CalendarV3::Event.new(
         summary: event.title,
         description: event.description,
-        start: Google::Apis::CalendarV3::EventDateTime.new(date_time: event.start_time.iso8601),
-        end: Google::Apis::CalendarV3::EventDateTime.new(date_time: event.end_time.iso8601)
+        start: Google::Apis::CalendarV3::EventDateTime.new(date_time: event.start_time.iso8601, time_zone: "Asia/Yangon"),
+        end: Google::Apis::CalendarV3::EventDateTime.new(date_time: event.end_time.iso8601, time_zone: "Asia/Yangon")
       )
-  
+      byebug
+    
       service.insert_event(event.calendar_id, google_event)
     end
   
